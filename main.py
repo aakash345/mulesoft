@@ -1,6 +1,33 @@
+from logging import exception
 import mysql.connector as mysql
 from tabulate import tabulate
 import datetime
+
+def createdb():
+    conn = mysql.connect(host="localhost", user="root", password="")
+    cur = conn.cursor()
+    try:
+        cur.execute("CREATE DATABASE mulesoft")
+        print("Database Created!")
+    except Exception as e:
+        conn.rollback()
+        # print(e)
+        print("Database already exist")
+    finally:
+        cur.execute("commit")
+        conn.close()
+def createtable():
+    conn = mysql.connect(host="localhost", user="root", password="",database="mulesoft")
+    cur = conn.cursor()
+    try:
+        cur.execute("CREATE TABLE movies ( id int(50) NOT NULL auto_increment, name varchar(50), release_date date, director varchar(100), lead_actor varchar(50), lead_actress varchar(50), PRIMARY KEY(id) );")
+    except Exception as e:
+        conn.rollback()
+        # print(e)
+        print("Table already exist")
+    finally:
+        cur.execute("commit")
+        conn.close()
 
 def show():
     conn = mysql.connect(host="localhost",user="root",password="",database="mulesoft")
@@ -37,17 +64,18 @@ repeat = 1
 while(repeat):
     print("\n")
     print("*****MENU******")
-    print("1. Show all Movies")
-    print("2. Search by name")
-    print("3. Insert a movie")
-    print("4. Enter '-1' to exit")
+    print("1. Create Database")
+    print("2. Create Table")
+    print("3. Insert a Movie")
+    print("4. Show all Movies")
+    print("5. Search by Actors name")
+    print("6. Enter '-1' to exit")
     choice = int(input("Enter Your Choice: "))
     print("\n")
     if choice==1:
-        show()
+        createdb()
     elif choice==2:
-        query = input("Enter your query: ")
-        find(query)
+        createtable()
     elif choice==3:
         name = input("Enter Movie Name: ")
         release_date = input("Release date in YYYY-MM-DD format: ")
@@ -55,6 +83,11 @@ while(repeat):
         actor = input("Lead Actor Name: ")
         actress = input("Actress Name: ")
         insert(name,release_date,director,actor,actress)
+    elif choice==4:
+        show()
+    elif choice==5:
+        query = input("Enter your query: ")
+        find(query)
     elif choice==-1:
         repeat=0
     else:
