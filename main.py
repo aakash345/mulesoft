@@ -43,21 +43,32 @@ def show():
 def find(query):
     conn = mysql.connect(host="localhost",user="root",password="",database="mulesoft")
     cur = conn.cursor()
-    cur.execute("SELECT name, release_date, director, lead_actor, lead_actress FROM movies where lead_actor LIKE '%" + query +"%' or lead_actress LIKE '%" + query +"%' ORDER BY release_date ASC")
-    records = cur.fetchall()
-    head = ["Name", "Release Date","Director","Actors","Actress"]
-    print("Search Results: ")
-    print(tabulate(records, headers=head, tablefmt="grid"))
-    cur.execute("commit")
-    conn.close()
+    try:
+        cur.execute("SELECT name, release_date, director, lead_actor, lead_actress FROM movies where lead_actor LIKE '%" + query +"%' or lead_actress LIKE '%" + query +"%' ORDER BY release_date ASC")
+        records = cur.fetchall()
+        if records:
+            head = ["Name", "Release Date","Director","Actors","Actress"]
+            print("Search Results: ")
+            print(tabulate(records, headers=head, tablefmt="grid"))
+        else:
+            print("No results found..")
+    except Exception as e:
+        print(e)
+    finally:
+        cur.execute("commit")
+        conn.close()
 
 def insert(name,release_date,director,actor,actress):
     conn = mysql.connect(host="localhost", user="root", password="", database="mulesoft")
     cur = conn.cursor()
-    cur.execute("INSERT INTO movies (name,release_date,director,lead_actor,lead_actress) VALUES (%s,%s,%s,%s,%s)", (name, release_date, director, actor,actress))
-    print("Data Inserted!!!")
-    cur.execute("commit")
-    conn.close()
+    try:
+        cur.execute("INSERT INTO movies (name,release_date,director,lead_actor,lead_actress) VALUES (%s,%s,%s,%s,%s)", (name, release_date, director, actor,actress))
+        print("Data Inserted!!!")
+    except Exception as e:
+        print(e)
+    finally:
+        cur.execute("commit")
+        conn.close()
 
 print('Welcome...')
 repeat = 1
